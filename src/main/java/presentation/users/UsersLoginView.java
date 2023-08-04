@@ -1,6 +1,10 @@
 package presentation.users;
 
-import persistance.UsersLoginAccessSQL;
+
+import business.entities.Users;
+import util.UserSession;
+import persistance.UsersDataAccessSQL;
+
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -11,17 +15,16 @@ import java.net.MalformedURLException;
 
 public class UsersLoginView extends JFrame {
 
-    private UsersLoginController usersLoginController;
+    private UsersLoginController usersLoginController = new UsersLoginController();
 
     private JTextField fieldUsername;
-
     private JPasswordField fieldPassword;
 
 
     public UsersLoginView() {
         setTitle("ClientLoginView");
         setContentPane(createUsersLoginPanel());
-        setSize(300, 250);
+        setSize(400, 250);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }
@@ -70,14 +73,20 @@ public class UsersLoginView extends JFrame {
     private JPanel createButtonPanel() {
         JPanel buttonsPanel = new JPanel();
         buttonsPanel.setLayout(new GridLayout(1, 2, 10, 10));
-        JButton buttonOk = new JButton("OK");
+        JButton buttonOk = new JButton("Login");
+        JButton buttonRegister = new JButton("Register");
+        buttonsPanel.add(buttonRegister);
+        buttonRegister.addActionListener(this::clickButtonRegister);
         buttonOk.addActionListener(this::clickButtonOk);
         buttonsPanel.add(buttonOk);
         JButton buttonCancel = new JButton("Cancel");
         buttonCancel.addActionListener(this::clickButtonCancel);
+        buttonCancel.addActionListener(e -> this.dispose());
+
         buttonsPanel.add(buttonCancel);
         return buttonsPanel;
     }
+
 
     private void clickButtonOk(ActionEvent event) {
         String username = fieldUsername.getText();
@@ -89,14 +98,23 @@ public class UsersLoginView extends JFrame {
         }
     }
 
+    private void clickButtonRegister(ActionEvent event) {
+        GridBagLayoutUsersInsert gridBagLayoutUsersInsert = new GridBagLayoutUsersInsert(false);
+    }
+
+
     private void clickButtonCancel(ActionEvent event) {
+        if (usersLoginController != null) {
         String username = fieldUsername.getText();
         String password = new String(fieldPassword.getPassword());
         usersLoginController.handleClickButtonCancel(new UsersLoginModel(username, password));
-    }
+    } else {
+        // Handle the case when usersLoginController is null
+        System.err.println("usersLoginController is null. Cannot handle cancel action.");
+    }}
 
     public static void main(String[] args) {
-        UsersLoginAccessSQL clientLoginService = new UsersLoginAccessSQL();
+        UsersDataAccessSQL clientLoginService = new UsersDataAccessSQL();
         UsersLoginView usersLoginView = new UsersLoginView();
         UsersLoginController usersLoginController = new UsersLoginController();
 

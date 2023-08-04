@@ -79,7 +79,7 @@ public class AdminManagementView extends JFrame {
         return parentPanel;
     }
 
-    private static void addItem(JPanel panel, JComponent component, int x, int y, int align, int gWidth, double weightX, double weightY) {
+    public static void addItem(JPanel panel, JComponent component, int x, int y, int align, int gWidth, double weightX, double weightY) {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = x;
         gbc.gridy = y;

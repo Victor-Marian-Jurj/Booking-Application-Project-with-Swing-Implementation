@@ -1,5 +1,7 @@
 package presentation.users;
 
+import persistance.UsersDataAccessSQL;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -14,10 +16,10 @@ public class GridBagLayoutUsersDelete extends JFrame {
 
     private JButton cancelButtonDeleteUser;
 
-    private UsersController usersController = new UsersController();
-
+    private UsersController usersController;
 
     public GridBagLayoutUsersDelete() {
+        usersController = new UsersController(new UsersDataAccessSQL());
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         JPanel panel = new JPanel() ;
         panel.setLayout(new GridBagLayout());
@@ -49,16 +51,26 @@ public class GridBagLayoutUsersDelete extends JFrame {
     }
 
     private void buttonDeleteUser(ActionEvent actionEvent) {
-
-        if (username.getText().isEmpty()) {
-            showMessageDialog(null, "Field must not be empty");
-        } else {
-            String userName = username.getText();
-            usersController.handleClickButtonDeleteUsers(userName);
-            showMessageDialog(null, "User deleted");
+        if (usersController == null) {
+            System.err.println("usersController is null. Cannot handle delete user action.");
+            return;
         }
 
+        String usernameToDelete = username.getText();
+        if (usernameToDelete.isEmpty()) {
+            showMessageDialog(null, "Field must not be empty");
+            return;
+        }
+
+        if (usersController.isUsernameExists(usernameToDelete)) {
+            usersController.handleClickButtonDeleteUsers(usernameToDelete);
+            showMessageDialog(null, "User deleted");
+        } else {
+            showMessageDialog(null, "Username does not exist in the database.");
+        }
     }
+
+
 
     private void addItem(JPanel panel, JComponent component, int x, int y, int align){
         GridBagConstraints gbc = new GridBagConstraints();

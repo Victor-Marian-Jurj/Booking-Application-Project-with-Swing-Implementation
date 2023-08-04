@@ -28,6 +28,10 @@ public class Room {
           this.hotelId = hotelId;
      }
 
+     public Room() {
+
+     }
+
      public String getHotelId() {
           return hotelId;
      }

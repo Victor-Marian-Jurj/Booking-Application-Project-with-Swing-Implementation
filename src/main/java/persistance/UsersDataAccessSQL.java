@@ -1,10 +1,12 @@
 package persistance;
 
 import business.entities.Users;
+import business.services.UserAccount;
 import util.DBUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class UsersDataAccessSQL implements UsersDataAccess {
@@ -143,4 +145,148 @@ public class UsersDataAccessSQL implements UsersDataAccess {
             }
         }
     }
+
+    public UserAccount getUserAccountByUsername(String username) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = DBUtil.getConnection();
+
+            String query = "SELECT username, password, isAdmin FROM users WHERE username = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, username);
+
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                String retrievedUsername = resultSet.getString("username");
+                String retrievedPassword = resultSet.getString("password");
+                boolean retrievedIsAdmin = resultSet.getBoolean("isAdmin");
+                return new UserAccount(retrievedUsername, retrievedPassword, retrievedIsAdmin);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Close the database resources
+            DBUtil.closeConnection(connection);
+        }
+
+        return null; // User account not found
+    }
+
+
+    public boolean isUsernameExists(String username) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = DBUtil.getConnection();
+
+            String query = "SELECT COUNT(*) FROM users WHERE username = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, username);
+
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                int count = resultSet.getInt(1);
+                return count > 0; // Return true if count > 0 (username exists), false otherwise
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Close the database resources
+            DBUtil.closeConnection(connection);
+        }
+
+        return false; // User account not found
+    }
+
+    public UserAccount getUserAccountByEmail(String email) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = DBUtil.getConnection();
+
+            String query = "SELECT username, password, isAdmin FROM users WHERE email_adress = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, email);
+
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                String retrievedUsername = resultSet.getString("username");
+                String retrievedPassword = resultSet.getString("password");
+                boolean retrievedIsAdmin = resultSet.getBoolean("isAdmin");
+                return new UserAccount(retrievedUsername, retrievedPassword, retrievedIsAdmin);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Close the database resources
+            DBUtil.closeConnection(connection);
+        }
+
+        return null; // User account not found
+    }
+
+
+
+    public void updatePassword(String username, String newPassword) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = DBUtil.getConnection();
+            statement = connection.prepareStatement("UPDATE users SET password = ? WHERE username = ?");
+            statement.setString(1, newPassword);
+            statement.setString(2, username);
+            int noOfUpdates = statement.executeUpdate();
+            System.out.println("Number of updated records = " + noOfUpdates);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    public void updatePhoneNumber(String username, String newPhoneNumber) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = DBUtil.getConnection();
+            statement = connection.prepareStatement("UPDATE users SET phone_number = ? WHERE username = ?");
+            statement.setString(1, newPhoneNumber);
+            statement.setString(2, username);
+            int noOfUpdates = statement.executeUpdate();
+            System.out.println("Number of updated records = " + noOfUpdates);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    public void updateEmailAddress(String username, String newEmailAddress) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = DBUtil.getConnection();
+            statement = connection.prepareStatement("UPDATE users SET email_address = ? WHERE username = ?");
+            statement.setString(1, newEmailAddress);
+            statement.setString(2, username);
+            int noOfUpdates = statement.executeUpdate();
+            System.out.println("Number of updated records = " + noOfUpdates);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+
 }

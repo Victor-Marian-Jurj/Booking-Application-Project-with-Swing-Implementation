@@ -31,7 +31,7 @@ public class GridBagLayoutPaymentDelete extends JFrame {
 
         addItem(deletePaymentPanel, paymentIdField, 1, 0, GridBagConstraints.WEST);
 
-        deletePaymentButton = new JButton("Delete Payment");
+        deletePaymentButton = new JButton("Save");
 
         cancelPaymentButton = new JButton("Cancel");
 

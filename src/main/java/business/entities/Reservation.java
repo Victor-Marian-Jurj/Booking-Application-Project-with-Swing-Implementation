@@ -1,7 +1,7 @@
 package business.entities;
 
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.Objects;
 
 public class Reservation {
@@ -13,13 +13,15 @@ public class Reservation {
     private String hotelId;
 
     private String roomId;
+    private String roomType;
+    private String hotelName;
     private String reservationStatus;
 
-    private Date checkInDate;
+    private java.sql.Date checkInDate;
 
-    private Date checkOutDate;
+    private java.sql.Date checkOutDate;
 
-    public Reservation(String reservationId, String username, String hotelId, String roomId, String reservationStatus, Date checkInDate, Date checkOutDate) {
+    public Reservation(String reservationId, String username, String hotelId, String roomId, String reservationStatus, java.sql.Date checkInDate, java.sql.Date checkOutDate) {
         this.reservationId = reservationId;
         this.username = username;
         this.hotelId = hotelId;
@@ -28,6 +30,20 @@ public class Reservation {
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
     }
+
+    public Reservation(String username, String hotelName, String roomType, java.sql.Date checkInDate, java.sql.Date checkOutDate){
+        this.username = username;
+        this.hotelName = hotelName;
+        this.roomType = roomType;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+    }
+
+    public Reservation(String hotel_id, String room_id, java.sql.Date check_in_date, java.sql.Date check_out_date){
+
+    }
+
+
 
     public String getReservationId() {
         return reservationId;
@@ -69,7 +85,7 @@ public class Reservation {
         this.reservationStatus = reservationStatus;
     }
 
-    public Date getCheckInDate() {
+    public java.sql.Date getCheckInDate() {
         return checkInDate;
     }
 
@@ -77,7 +93,7 @@ public class Reservation {
         this.checkInDate = checkInDate;
     }
 
-    public Date getCheckOutDate() {
+    public java.sql.Date getCheckOutDate() {
         return checkOutDate;
     }
 
@@ -89,8 +105,8 @@ public class Reservation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Reservation that = (Reservation) o;
-        return Objects.equals(reservationId, that.reservationId) && Objects.equals(username, that.username) && Objects.equals(hotelId, that.hotelId) && Objects.equals(roomId, that.roomId) && Objects.equals(reservationStatus, that.reservationStatus) && Objects.equals(checkInDate, that.checkInDate) && Objects.equals(checkOutDate, that.checkOutDate);
+        Reservation reservation = (Reservation) o;
+        return username == reservation.username && checkInDate == reservation.checkInDate && checkOutDate == reservation.checkOutDate && Objects.equals(hotelId, reservation.hotelId) && Objects.equals(roomId, reservation.roomId) && Objects.equals(reservationStatus, reservation.reservationStatus);
     }
 
     @Override

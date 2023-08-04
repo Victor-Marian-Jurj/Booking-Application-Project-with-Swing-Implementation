@@ -10,12 +10,12 @@ import presentation.hotel.*;
 import business.services.UsersService;
 
 import persistance.UsersDataAccessSQL;
-
+import presentation.reservation.*;
 import presentation.payment.*;
-
 import presentation.room.*;
 
 import presentation.users.*;
+import util.UserSession;
 
 
 import javax.swing.*;
@@ -25,6 +25,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class AdminView extends JFrame {
+
+    private final String userType = "admin";
 
     public AdminView() throws MalformedURLException {
         super("Admin View");
@@ -42,6 +44,7 @@ public class AdminView extends JFrame {
         JMenuItem showClients = new JMenuItem("Show All Clients");
         JMenuItem showHotels = new JMenuItem("Show All Hotels");
         JMenuItem showRooms = new JMenuItem("Show All Rooms");
+
         database.add(showPayments);
         database.add(showReservations);
         database.add(showClients);
@@ -51,8 +54,8 @@ public class AdminView extends JFrame {
 
         showClients.addActionListener(e -> buttonShowClientsPressed());
         showRooms.addActionListener(e -> buttonShowAllRoomsPressed());
+        showReservations.addActionListener(e -> buttonShowAllReservationsPressed());
         showPayments.addActionListener(e -> buttonShowAllPaymentsIsPressed());
-
 
         JMenu clientsOperations = new JMenu("Clients Operations");
         JMenuItem deleteClient = new JMenuItem("Delete Client");
@@ -66,7 +69,6 @@ public class AdminView extends JFrame {
         updateClient.addActionListener(e -> buttonUpdateUserPressed());
         deleteClient.addActionListener(e -> buttonDeleteUserPressed());
 
-
         JMenu reservationsOperations = new JMenu("Reservation Operations");
         JMenuItem deleteReservation = new JMenuItem("Delete Reservation");
         JMenuItem insertReservation = new JMenuItem("New Reservation");
@@ -75,6 +77,9 @@ public class AdminView extends JFrame {
         reservationsOperations.add(insertReservation);
         reservationsOperations.add(updateReservation);
 
+        insertReservation.addActionListener(e -> buttonInsertReservationPressed());
+        updateReservation.addActionListener(e -> buttonUpdateReservationPressed());
+        deleteReservation.addActionListener(e -> buttonDeleteReservationPressed());
 
         JMenu roomsOperations = new JMenu("Room Operations");
         JMenuItem deleteRoom = new JMenuItem("Delete Room");
@@ -83,9 +88,6 @@ public class AdminView extends JFrame {
         roomsOperations.add(deleteRoom);
         roomsOperations.add(insertRoom);
         roomsOperations.add(updateRoom);
-
-
-        showHotels.addActionListener(e -> buttonShowHotelsPressed());
 
         insertRoom.addActionListener(e -> buttonInsertRoomPressed());
         updateRoom.addActionListener(e -> buttonUpdateRoomPressed());
@@ -100,6 +102,8 @@ public class AdminView extends JFrame {
         hotelsOperations.add(insertHotel);
         hotelsOperations.add(updateHotel);
 
+
+        showHotels.addActionListener(e -> buttonShowHotelsPressed());
 
         insertHotel.addActionListener(e -> buttonInsertHotelPressed());
         updateHotel.addActionListener(e -> buttonUpdateHotelPressed());
@@ -118,6 +122,9 @@ public class AdminView extends JFrame {
         insertPayment.addActionListener(e -> buttonInsertPaymentIsPressed());
         updatePayment.addActionListener(e -> buttonUpdatePaymentIsPressed());
 
+        JMenu disconnect =new JMenu("Disconnect");
+        JMenuItem logOut = new JMenuItem("LogOut");
+        disconnect.add(logOut);
 
         menuBar.add(database);
         menuBar.add(clientsOperations);
@@ -125,6 +132,15 @@ public class AdminView extends JFrame {
         menuBar.add(roomsOperations);
         menuBar.add(hotelsOperations);
         menuBar.add(paymentsOperations);
+        menuBar.add(disconnect);
+
+        logOut.addActionListener(e -> {
+            try {
+                buttonLogoutPressed();
+            } catch (MalformedURLException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
 
         JLabel adminPhoto = new JLabel();
@@ -139,8 +155,29 @@ public class AdminView extends JFrame {
         this.setVisible(true);
         this.pack();
         this.setJMenuBar(menuBar);
-        this.setSize(750, 600);
+        this.setSize(800, 600);
         this.setLocationRelativeTo(null);
+
+    }
+
+    private void buttonShowAllPaymentsIsPressed() {
+        PaymentService paymentService = new PaymentService(new PaymentDataAccessSQL());
+        PaymentModel paymentModel = new PaymentModel(paymentService.getPayments());
+        PaymentView paymentView= new PaymentView(paymentModel.getPaymentList());
+        PaymentController paymentController = new PaymentController(paymentView, paymentModel,paymentService);
+        paymentView.setController(paymentController);
+    }
+
+    private void buttonUpdatePaymentIsPressed() {
+        new GridBagLayoutPaymentUpdate();
+    }
+
+    private void buttonInsertPaymentIsPressed() {
+        new GridBagLayoutPaymentInsert();
+    }
+
+    private void buttonDeletePaymentIsPressed() {
+        new GridBagLayoutPaymentDelete();
 
     }
 
@@ -191,7 +228,6 @@ public class AdminView extends JFrame {
         GridBagLayoutRoomDelete gridBagLayoutRoomDelete = new GridBagLayoutRoomDelete();
     }
 
-
     public void buttonShowHotelsPressed() {
         HotelService hotelService = new HotelService(new HotelDataAccessSQL());
         HotelModel hotelModel = new HotelModel(hotelService.getAllHotels());
@@ -216,28 +252,43 @@ public class AdminView extends JFrame {
         GridBagLayoutHotelDelete gridBagLayoutHotelDelete = new GridBagLayoutHotelDelete();
     }
 
-
-    private void buttonUpdatePaymentIsPressed() {
-        new GridBagLayoutPaymentUpdate();
+    private void buttonShowAllReservationsPressed(){
+        ReservationService reservationService = new ReservationService(new ReservationDataAccessSQL());
+        ReservationModel reservationModel = new ReservationModel(reservationService.getReservations());
+        ReservationView reservationView = new ReservationView(userType, reservationModel.getReservationList());
+        ReservationController reservationController = new ReservationController(userType, reservationView, reservationModel, reservationService);
+        reservationView.setReservationController(reservationController);
     }
 
-    private void buttonInsertPaymentIsPressed() {
-        new GridBagLayoutPaymentInsert();
+    public void buttonInsertReservationPressed() {
+        ReservationService reservationService = new ReservationService(new ReservationDataAccessSQL());
+        GridBagLayoutReservationInsert gridBagLayoutReservationInsert = new GridBagLayoutReservationInsert(userType);
     }
 
-    private void buttonDeletePaymentIsPressed() {
-        new GridBagLayoutPaymentDelete();
+    public void buttonUpdateReservationPressed (){
+        ReservationService reservationService =  new ReservationService(new ReservationDataAccessSQL());
+        GridBagLayoutReservationUpdate gridBagLayoutReservationUpdate = new GridBagLayoutReservationUpdate();
 
     }
 
-    private void buttonShowAllPaymentsIsPressed() {
-        PaymentService paymentService = new PaymentService(new PaymentDataAccessSQL());
-        PaymentModel paymentModel = new PaymentModel(paymentService.getPayments());
-        PaymentView paymentView = new PaymentView(paymentModel.getPaymentList());
-        PaymentController paymentController = new PaymentController(paymentView, paymentModel, paymentService);
-        paymentView.setController(paymentController);
-    }
+    public void buttonDeleteReservationPressed () {
+        ReservationService reservationService = new ReservationService(new ReservationDataAccessSQL());
+        GridBagLayoutReservationDelete gridBagLayoutReservationDelete = new GridBagLayoutReservationDelete();
 
+    }
+    private void buttonLogoutPressed () throws MalformedURLException {
+         this.dispose();
+         retryLogin();
+    }
+    private void retryLogin (){
+        UsersDataAccessSQL clientLoginService = new UsersDataAccessSQL();
+        UsersLoginView usersLoginView = new UsersLoginView();
+        UsersLoginController usersLoginController = new UsersLoginController();
+        usersLoginView.setUsersLoginController(usersLoginController);
+        usersLoginController.setClientLoginView(usersLoginView);
+        usersLoginController.setClientLoginService(clientLoginService);
+        usersLoginController.start();
+    }
 
     public static void main(String[] args) {
 

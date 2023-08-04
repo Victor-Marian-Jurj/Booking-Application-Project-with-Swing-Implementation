@@ -9,6 +9,8 @@ public interface ReservationDataAccess {
 
     public List<Reservation> getAllReservations();
 
+    List<Reservation> getReservationForUser(String username);
+
     public void saveAllReservations(List<Reservation> reservations);
 
     void updateValuesReservation(String reservation_Id, String reservation_status);

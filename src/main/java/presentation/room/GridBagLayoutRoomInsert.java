@@ -1,25 +1,35 @@
 package presentation.room;
 
+import business.entities.Hotel;
 import business.entities.Room;
+import business.services.HotelService;
+import business.services.RoomService;
 import presentation.users.GridBagLayoutUsersInsert;
+import util.IDRandomiser;
 import util.Utils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.List;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 import static util.Utils.*;
 
 public class GridBagLayoutRoomInsert extends JFrame {
 
-    private JTextField fieldRoomId;
     private JTextField fieldRoomNumber;
     private JTextField fieldRoomType;
     private JTextField fieldRoomFloor;
     private JTextField fieldRoomPrice;
     private JTextField fieldHotelId;
+
+    JComboBox<String> comboBox;
+    List<Hotel> hotelList;
+    HotelService hotelService = new HotelService();
     private JButton saveButtonRoomInsert;
 
     private JButton cancelButtonRoomInsert;
@@ -31,29 +41,34 @@ public class GridBagLayoutRoomInsert extends JFrame {
         panel.setLayout(new GridBagLayout());
         setLocationRelativeTo(null);
 
-        addItem(panel, new JLabel("Room Id: "), 0, 0, GridBagConstraints.EAST);
         addItem(panel, new JLabel("Room Number: "), 0, 1, GridBagConstraints.EAST);
         addItem(panel, new JLabel("Room Type: "), 0, 2, GridBagConstraints.EAST);
         addItem(panel, new JLabel("Room Floor: "), 0, 3, GridBagConstraints.EAST);
         addItem(panel, new JLabel("Room Price: "), 0, 4, GridBagConstraints.EAST);
-        addItem(panel, new JLabel("Hotel Id: "), 0, 5, GridBagConstraints.EAST);
+        addItem(panel, new JLabel("Hotel Name: "), 0, 5, GridBagConstraints.EAST);
 
+        List<String> hotelNameList = new ArrayList<>();
 
-        fieldRoomId = new JTextField(20);
+        hotelList = hotelService.getAllHotels();
+        for(Hotel hotel: hotelList) {
+            hotelNameList.add(hotel.getName());
+        }
+
         fieldRoomNumber = new JTextField(20);
         fieldRoomType = new JTextField(20);
         fieldRoomFloor = new JTextField(20);
         fieldRoomPrice = new JTextField(20);
         fieldHotelId = new JTextField(20);
+        comboBox = new JComboBox<>(hotelNameList.toArray(new String[0]));
 
-        addItem(panel, fieldRoomId, 1, 0, GridBagConstraints.WEST);
         addItem(panel, fieldRoomNumber, 1, 1, GridBagConstraints.WEST);
         addItem(panel, fieldRoomType, 1, 2, GridBagConstraints.WEST);
         addItem(panel, fieldRoomFloor, 1, 3, GridBagConstraints.WEST);
         addItem(panel, fieldRoomPrice, 1, 4, GridBagConstraints.WEST);
-        addItem(panel, fieldHotelId, 1, 5, GridBagConstraints.WEST);
+        addItem(panel, comboBox, 1, 5, GridBagConstraints.WEST);
 
-        saveButtonRoomInsert = new JButton("Save new room");
+
+        saveButtonRoomInsert = new JButton("Save");
         saveButtonRoomInsert.addActionListener(this::buttonInsertRoom);
         cancelButtonRoomInsert = new JButton("Cancel");
         cancelButtonRoomInsert.addActionListener(e -> this.dispose());
@@ -79,28 +94,28 @@ public class GridBagLayoutRoomInsert extends JFrame {
 
     private void buttonInsertRoom(ActionEvent event) {
 
-        boolean roomIdIsValid = Utils.containsOnlyNumbers(fieldRoomId.getText(), ALPHANUMERIC_REGEX);
         boolean roomNumberIsNumber = Utils.containsOnlyNumbers(fieldRoomNumber.getText(), NUMBER_REGEX);
         boolean roomTypeIsValid = Utils.containsOnlyNumbers(fieldRoomType.getText(), LETTERS_REGEX);
         boolean roomFloorIsNumber = Utils.containsOnlyNumbers(fieldRoomFloor.getText(), NUMBER_REGEX);
         boolean roomPriceIsNumber = Utils.containsOnlyNumbers(fieldRoomPrice.getText(), DECIMAL_DOUBLE_REGEX);
-        boolean hotelIdIsValid = Utils.containsOnlyNumbers(fieldHotelId.getText(), ALPHANUMERIC_REGEX);
 
-        String invalidFields = checkInvalidFields(roomIdIsValid, roomNumberIsNumber, roomTypeIsValid, roomFloorIsNumber, roomPriceIsNumber, hotelIdIsValid);
-        if (fieldRoomId.getText().isEmpty() || fieldHotelId.getText().isEmpty() ||
-                fieldRoomType.getText().isEmpty() || fieldRoomFloor.getText().isEmpty() ||
+        String invalidFields = checkInvalidFields(roomNumberIsNumber, roomTypeIsValid, roomFloorIsNumber, roomPriceIsNumber);
+        if (fieldRoomType.getText().isEmpty() || fieldRoomFloor.getText().isEmpty() ||
                 fieldRoomPrice.getText().isEmpty()) {
             showMessageDialog(null, "Fields must not be empty");
-        } else if (!roomIdIsValid || !roomNumberIsNumber || !roomTypeIsValid ||
-                !roomFloorIsNumber || !roomPriceIsNumber || !hotelIdIsValid) {
+        } else if (!roomNumberIsNumber || !roomTypeIsValid ||
+                !roomFloorIsNumber || !roomPriceIsNumber ) {
             showMessageDialog(null, "Fields are not valid:\n" + invalidFields);
         } else {
-            String roomId = fieldRoomId.getText();
+            String roomId = IDRandomiser.getId();
             Integer roomNumber = Integer.parseInt(fieldRoomNumber.getText());
             String roomType = fieldRoomType.getText();
             Integer roomFloor = Integer.parseInt(fieldRoomFloor.getText());
             Integer roomPrice = Integer.parseInt(fieldRoomPrice.getText());
-            String hotelId = fieldHotelId.getText();
+
+            int indexHotel = comboBox.getSelectedIndex();
+            Hotel hotelSelected = hotelList.get(indexHotel);
+            String hotelId = String.valueOf(hotelSelected.getHotelId());
             boolean isAvailable = true;
 
 
@@ -119,16 +134,8 @@ public class GridBagLayoutRoomInsert extends JFrame {
         gbc.anchor = align;
         panel.add(component, gbc);
     }
-    private static String checkInvalidFields(boolean roomIdIsValid, boolean roomNumberIsNumber, boolean roomTypeIsValid, boolean roomFloorIsNumber, boolean roomPriceIsNumber, boolean hotelIdIsValid) {
-        String roomIdInvalid = "";
-        if(!roomIdIsValid) {
-            roomIdInvalid = "- room id is invalid\n";
-        }
+    private static String checkInvalidFields(boolean roomNumberIsNumber, boolean roomTypeIsValid, boolean roomFloorIsNumber, boolean roomPriceIsNumber) {
 
-        String hotelIdInvalid = "";
-        if(!hotelIdIsValid) {
-            hotelIdInvalid = "- hotel id is invalid\n";
-        }
 
         String roomNumberInvalid = "";
         if(!roomNumberIsNumber) {
@@ -149,7 +156,7 @@ public class GridBagLayoutRoomInsert extends JFrame {
         if(!roomPriceIsNumber) {
             roomPriceInvalid = "- room price is invalid\n";
         }
-        String invalidFields = roomIdInvalid + roomNumberInvalid + roomTypeInvalid + roomFloorInvalid + roomPriceInvalid + hotelIdInvalid;
+        String invalidFields = roomNumberInvalid + roomTypeInvalid + roomFloorInvalid + roomPriceInvalid;
         return invalidFields;
     }
 

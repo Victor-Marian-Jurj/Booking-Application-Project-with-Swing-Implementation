@@ -10,7 +10,7 @@ email_adress VARCHAR(50) NOT NULL UNIQUE
 
 
 CREATE TABLE hotel(
-hotel_id CHAR(5) PRIMARY KEY,
+hotel_id CHAR(35) PRIMARY KEY,
 number_of_rooms INTEGER NOT NULL,
 rating INTEGER NOT NULL,
 name VARCHAR(30) NOT NULL,
@@ -18,22 +18,22 @@ location VARCHAR(30) NOT NULL
 );
 
 CREATE TABLE room (
-room_id CHAR(5) PRIMARY KEY,
+room_id CHAR(35) PRIMARY KEY,
 room_number INTEGER NOT NULL,
 room_type VARCHAR(20) NOT NULL,
 room_floor INTEGER NOT NULL,
 room_price INTEGER NOT NULL,
-hotel_id CHAR(5) NOT NULL,
+hotel_id CHAR(35) NOT NULL,
 CONSTRAINT fk_hotel_id
 FOREIGN KEY (hotel_id)
 REFERENCES hotel (hotel_id)
 );
 
 CREATE TABLE reservation (
-reservation_id CHAR(5) PRIMARY KEY,
-username VARCHAR(35) NOT NULL UNIQUE,
-hotel_id CHAR(5) NOT NULL,
-room_id CHAR(5) NOT NULL UNIQUE,
+reservation_id CHAR(35) PRIMARY KEY,
+username VARCHAR(35) NOT NULL,
+hotel_id CHAR(35) NOT NULL,
+room_id CHAR(35) NOT NULL,
 reservation_status VARCHAR(20) NOT NULL,
 check_in_date DATE NOT NULL,
 check_out_date DATE NOT NULL,
@@ -49,9 +49,9 @@ REFERENCES room(room_id)
 );
 
 CREATE TABLE payment (
-payment_id CHAR(5) PRIMARY KEY,
+payment_id CHAR(35) PRIMARY KEY,
 username VARCHAR(35) NOT NULL UNIQUE,
-reservation_id CHAR(5) NOT NULL UNIQUE,
+reservation_id CHAR(35) NOT NULL UNIQUE,
 room_price INTEGER NOT NULL,
 number_of_nights INTEGER NOT NULL,
 total INTEGER NOT NULL,
@@ -69,6 +69,19 @@ ALTER TABLE room ADD COLUMN is_available boolean DEFAULT true;
 ALTER TABLE payment ALTER column room_price TYPE varchar(20)
 ALTER TABLE payment ALTER column number_of_nights TYPE varchar(5)
 ALTER TABLE payment ALTER column total TYPE varchar(20)
+
+ALTER Table hotel alter column hotel_id type varchar(36);
+ALTER Table reservation alter column reservation_id type varchar(36);
+ALTER Table payment alter column payment_id type varchar(36);
+ALTER Table room alter column room_id type varchar(36);
+
+
+ALTER TABLE reservation
+DROP CONSTRAINT reservation_username_key;
+
+ALTER TABLE reservation
+DROP CONSTRAINT reservation_room_id_key;
+
 
 
 -------------------------------------------------------------------------------------------------------------

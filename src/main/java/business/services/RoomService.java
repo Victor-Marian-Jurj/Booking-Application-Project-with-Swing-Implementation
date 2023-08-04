@@ -26,22 +26,6 @@ public class RoomService {
         List<Room> rooms = roomDataAccess.getAllAvailableRooms();
         return rooms;
     }
-
-//    public void addNewRoom(Room newRoom) {
-//        List<Room> rooms = roomDataAccess.getAllRooms();
-//        rooms.add(newRoom);
-//        roomDataAccess.saveAllRooms(rooms);
-//    }
-
-//    public void removeExistingRoom(String roomId) {
-//        List<Room> rooms = roomDataAccess.getAllRooms();
-//        int index = getRoomIndex(rooms, roomId);
-//        if (index != -1) { // if found
-//            rooms.remove(index);
-//            roomDataAccess.saveAllRooms(rooms);
-//        }
-//    }
-
     private int getRoomIndex(List<Room> rooms, String roomId) {
         for (int currentIndex = 0; currentIndex < rooms.size(); currentIndex++) {
             Room currentRoom = rooms.get(currentIndex);
@@ -56,6 +40,15 @@ public class RoomService {
     public void updateRoom(String roomId, int roomPrice) {
         roomDataAccess.updateValuesRoom(roomId, roomPrice);
     }
+
+    public void updateRoomByRoomNumberAndHotelId(int roomNumber, String hotelId, int roomPrice) {
+        roomDataAccess.updateRoomByRoomNumberAndHotelId(roomNumber, hotelId, roomPrice);
+    }
+
+    public void deleteRoomByRoomNumberAndHotelId(int roomNumber, String hotelId) {
+        roomDataAccess.deleteRoomByRoomNumberAndHotelId(roomNumber,hotelId);
+    }
+
 
     public void insertRoom(Room room) {
         roomDataAccess.insertValuesRoom(room);

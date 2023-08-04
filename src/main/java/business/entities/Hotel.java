@@ -13,12 +13,14 @@ public class Hotel implements Comparable<Hotel>{
 
     private String location;
 
+
     public Hotel(String hotelId, int number_of_rooms, int rating, String name, String location) {
         this.hotelId = hotelId;
         this.number_of_rooms = number_of_rooms;
         this.rating = rating;
         this.name = name;
         this.location = location;
+
     }
 
 

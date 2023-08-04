@@ -26,7 +26,7 @@ public class HotelView extends JFrame {
         JScrollPane pane = getTablePane();
         content.add(pane);
         content.add(refreshButton);
-        refreshButton.addActionListener(e->controller.buttonRefreshPressed());
+        refreshButton.addActionListener(e->controller.buttonRefreshPressedHotel());
         this.setContentPane(content);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setVisible(true);
@@ -34,7 +34,7 @@ public class HotelView extends JFrame {
     }
 
     private JScrollPane getTablePane() {
-        String[] header = {"hotel_id", "number_of_rooms", "rating", "name", "location"};
+        String[] header = {"name", "location", "rating", "number of rooms" };
         tableModel = new DefaultTableModel(header, 0);
         JTable table = new JTable(tableModel);
         table.setPreferredScrollableViewportSize(new Dimension(1000, 400));
@@ -53,7 +53,7 @@ public class HotelView extends JFrame {
     public void refreshTableHotel(List<Hotel> hotelList) {
         tableModel.setRowCount(0);
         for(Hotel hotel:hotelList) {
-            tableModel.addRow(new Object [] {hotel.getHotelId(), hotel.getNumber_of_rooms(), hotel.getRating(), hotel.getName(), hotel.getLocation()});
+            tableModel.addRow(new Object [] {hotel.getName(), hotel.getLocation(), hotel.getRating(), hotel.getNumber_of_rooms()});
         }
     }
 

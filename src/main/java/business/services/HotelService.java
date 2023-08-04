@@ -22,8 +22,8 @@ public class HotelService {
         List<business.entities.Hotel> list = hotelDataAccess.getAllHotels();
         return list.stream().sorted().collect(Collectors.toList());
     }
-    public void updateHotel(String hotel_id, String name) {
-        hotelDataAccess.updateHotelValues(hotel_id, name);
+    public void updateHotel(String hotel_id, int number_of_rooms, int rating, String name, String location) {
+        hotelDataAccess.updateHotelValues(hotel_id, number_of_rooms, rating, name, location);
     }
 
     public void insertHotel(Hotel hotel) {hotelDataAccess.insertHotelValues(hotel);

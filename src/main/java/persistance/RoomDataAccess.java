@@ -16,4 +16,8 @@ public interface RoomDataAccess {
     void deleteValuesRoom(String roomId);
 
     void selectValuesRoom(String roomId);
+
+    void updateRoomByRoomNumberAndHotelId(int roomNumber, String hotelId, int roomPrice);
+
+ void deleteRoomByRoomNumberAndHotelId(int roomNumber, String hotelId);
 }

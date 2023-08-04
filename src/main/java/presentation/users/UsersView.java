@@ -41,7 +41,7 @@ public class UsersView extends JFrame {
     }
 
     private JScrollPane getTablePane() {
-        String[] header = {"username", "password", "isAdmin", "first name", "last name", "phone number", "email adress"};
+        String[] header = {"username", "isAdmin", "first name", "last name", "phone number", "email adress"};
         tableModel = new DefaultTableModel(header, 0);
         JTable table = new JTable(tableModel);
         table.setPreferredScrollableViewportSize(new Dimension(1000, 400));
@@ -61,7 +61,7 @@ public class UsersView extends JFrame {
     public void refreshTableUsers(List<Users> usersList) {
         tableModel.setRowCount(0);
         for(Users users : usersList) {
-            tableModel.addRow(new Object [] {users.getUsername(), users.getPassword(), users.getIsAdmin(), users.getFirstName(), users.getLastName(), users.getPhoneNumber(), users.getEmailAdress()});
+            tableModel.addRow(new Object [] {users.getUsername(), users.getIsAdmin(), users.getFirstName(), users.getLastName(), users.getPhoneNumber(), users.getEmailAdress()});
         }
     }
 

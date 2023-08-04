@@ -43,6 +43,13 @@ public class RoomController {
     public void handleClickButtonUpdateRoom (String roomId, int price){
         roomService.updateRoom(roomId, price);
     }
+    public void handleClickButtonUpdateRoomByRoomNumberAndHotelId (int roomNumber, String hotelId, int roomPrice){
+        roomService.updateRoomByRoomNumberAndHotelId(roomNumber, hotelId, roomPrice);
+    }
+
+    public void handleClickButtonDeleteRoomByRoomNumberAndHotelId (int roomNumber, String hotelId){
+        roomService.deleteRoomByRoomNumberAndHotelId(roomNumber, hotelId);
+    }
     public void start() {
         roomInsertView.display();
     }

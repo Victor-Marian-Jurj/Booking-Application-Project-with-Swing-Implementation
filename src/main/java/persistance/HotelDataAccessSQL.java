@@ -38,16 +38,19 @@ public class HotelDataAccessSQL implements persistance.HotelDataAccess {
     }
 
     @Override
-    public void updateHotelValues(String hotel_Id, String name) {
+    public void updateHotelValues(String hotel_Id, int number_of_rooms, int rating, String name, String location) {
         Connection connection = null;
         PreparedStatement statement = null;
         try {
             connection = DBUtil.getConnection();
-            statement = connection.prepareStatement("update Hotel set name = ? where hotel_Id = ?");
-            statement.setString(1, name);
-            statement.setString(2, hotel_Id);
+            statement = connection.prepareStatement("UPDATE hotel SET number_of_rooms = ?, rating = ?, name = ?, location = ? where hotel_Id = ?");
+            statement.setInt(1, number_of_rooms);
+            statement.setInt(2, rating);
+            statement.setString(3, name);
+            statement.setString(4, location);
+            statement.setString(5, hotel_Id);
             int noOfUpdates = statement.executeUpdate();
-            System.out.println("NUmber of updated records = " + noOfUpdates);
+            System.out.println("Number of updated records = " + noOfUpdates);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -85,7 +88,9 @@ public class HotelDataAccessSQL implements persistance.HotelDataAccess {
             statement = connection.prepareStatement("DELETE FROM hotel WHERE hotel_Id = ?");
             statement.setString(1, hotel_Id);
             int noOfInserts = statement.executeUpdate();
+
             System.out.println("Number of deleted records = " + noOfInserts);
+
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -130,5 +135,32 @@ public class HotelDataAccessSQL implements persistance.HotelDataAccess {
                 }
             }
         }
+    }
+    public boolean isfieldHotelIdExists(String fieldhotelId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = DBUtil.getConnection();
+
+            String query = "SELECT COUNT(*) FROM hotel WHERE hotel_id = ?";
+            statement = connection.prepareStatement(query);
+            statement.setString(1, fieldhotelId);
+
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                int count = resultSet.getInt(1);
+                return count > 0; // Return true if count > 0 (hotel exists), false otherwise
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Close the database resources
+            DBUtil.closeConnection(connection);
+        }
+
+        return false;
     }
 }

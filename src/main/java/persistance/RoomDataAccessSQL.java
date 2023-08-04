@@ -20,15 +20,15 @@ public class RoomDataAccessSQL implements RoomDataAccess {
             rs = statement.executeQuery("SELECT * from room");
             while (rs.next()) {
                 String roomId = rs.getString("room_Id");
-                int roomNumber = Integer.parseInt(String.valueOf((2)));
+                int roomNumber = rs.getInt(2);
                 String roomType = rs.getString(3);
-                int roomFloor = Integer.parseInt(String.valueOf((4)));
-                int roomPrice = Integer.parseInt(String.valueOf((5)));
+                int roomFloor = rs.getInt(4);
+                int roomPrice = rs.getInt(5);
                 String hotelId = rs.getString(6);
                 boolean isAvailable = rs.getBoolean(7);
 
 
-                Room room= new Room(roomId, roomNumber, roomType, roomFloor,  roomPrice,  hotelId, isAvailable);
+                Room room = new Room(roomId, roomNumber, roomType, roomFloor, roomPrice, hotelId, isAvailable);
                 roomList.add(room);
             }
         } catch (SQLException e) {
@@ -51,15 +51,15 @@ public class RoomDataAccessSQL implements RoomDataAccess {
             rs = statement.executeQuery("SELECT * FROM room WHERE is_available = true");
             while (rs.next()) {
                 String roomId = rs.getString("room_Id");
-                int roomNumber = Integer.parseInt(String.valueOf((2)));
+                int roomNumber = rs.getInt(2);
                 String roomType = rs.getString(3);
-                int roomFloor = Integer.parseInt(String.valueOf((4)));
-                int roomPrice = Integer.parseInt(String.valueOf((5)));
+                int roomFloor = rs.getInt(4);
+                int roomPrice = rs.getInt(5);
                 String hotelId = rs.getString(6);
                 boolean isAvailable = rs.getBoolean(7);
 
 
-                Room room= new Room(roomId, roomNumber, roomType, roomFloor,  roomPrice,  hotelId, isAvailable);
+                Room room = new Room(roomId, roomNumber, roomType, roomFloor, roomPrice, hotelId, isAvailable);
                 roomList.add(room);
             }
         } catch (SQLException e) {
@@ -70,6 +70,7 @@ public class RoomDataAccessSQL implements RoomDataAccess {
         return roomList;
     }
 
+
     @Override
     public void updateValuesRoom(String roomId, int roomPrice) {
         Connection connection = null;
@@ -77,7 +78,7 @@ public class RoomDataAccessSQL implements RoomDataAccess {
         try {
             connection = DBUtil.getConnection();
             statement = connection.prepareStatement("update room set room_price = ? where room_Id = ?");
-            statement.setInt(1,roomPrice);
+            statement.setInt(1, roomPrice);
             statement.setString(2, roomId);
             int noOfUpdates = statement.executeUpdate();
             System.out.println("NUmber of updated records = " + noOfUpdates);
@@ -99,7 +100,7 @@ public class RoomDataAccessSQL implements RoomDataAccess {
             statement.setInt(2, room.getRoomNumber());
             statement.setString(3, room.getRoomType());
             statement.setInt(4, room.getRoomFloor());
-            statement.setInt(5,room.getRoomPrice());
+            statement.setInt(5, room.getRoomPrice());
             statement.setString(6, room.getHotelId());
             statement.setBoolean(7, room.isAvailable());
 
@@ -130,8 +131,6 @@ public class RoomDataAccessSQL implements RoomDataAccess {
     }
 
 
-
-
     public void selectValuesRoom(String roomId) {
         Connection connection = null;
         PreparedStatement statement = null;
@@ -149,7 +148,6 @@ public class RoomDataAccessSQL implements RoomDataAccess {
                 String roomPrice = rs.getString("room_price");
                 String hotelId = rs.getString("hotel_id");
                 boolean isAvailable = rs.getBoolean("is_available");
-
 
 
                 System.out.println("Selected Room:");
@@ -173,6 +171,44 @@ public class RoomDataAccessSQL implements RoomDataAccess {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+
+    @Override
+    public void updateRoomByRoomNumberAndHotelId(int roomNumber, String hotelId, int roomPrice) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = DBUtil.getConnection();
+            statement = connection.prepareStatement("update room set room_price = ? where room_number = ? and hotel_id = ?");
+            statement.setInt(1, roomPrice);
+            statement.setInt(2, roomNumber);
+            statement.setString(3, hotelId);
+            int noOfUpdates = statement.executeUpdate();
+            System.out.println("NUmber of updated records = " + noOfUpdates);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeConnection(connection);
+        }
+    }
+
+    @Override
+    public void deleteRoomByRoomNumberAndHotelId(int roomNumber, String hotelId) {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = DBUtil.getConnection();
+            statement = connection.prepareStatement("delete from room where room_number = ? and hotel_id = ?");
+         //   statement.setInt(1, roomFloor);
+            statement.setInt(1, roomNumber);
+            statement.setString(2, hotelId);
+            int noOfUpdates = statement.executeUpdate();
+            System.out.println("NUmber of updated records = " + noOfUpdates);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.closeConnection(connection);
         }
     }
 }

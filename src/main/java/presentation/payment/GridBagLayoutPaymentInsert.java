@@ -63,7 +63,7 @@ public class GridBagLayoutPaymentInsert extends JFrame {
         addItem(insertPaymentPanel, paymentStatusField, 1, 6, GridBagConstraints.WEST);
 
 
-        insertPaymentButton = new JButton("Insert New Payment Record");
+        insertPaymentButton = new JButton("Save");
         cancelPaymentButton = new JButton("Cancel");
 
 

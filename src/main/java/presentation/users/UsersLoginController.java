@@ -1,22 +1,23 @@
 package presentation.users;
 
-import persistance.UsersLoginAccessSQL;
 import business.services.UserAccount;
+import persistance.UsersDataAccessSQL;
 import presentation.adminlogin.AdminView;
 import presentation.userlogin.UserView;
+import util.UserSession;
 
 import java.net.MalformedURLException;
 
 public class UsersLoginController {
     private UsersLoginView usersLoginView;
-    private UsersLoginAccessSQL clientLoginService;
+    private UsersDataAccessSQL clientLoginService;
     private UserAccount currentUserAccount = null;
 
     public void setClientLoginView(UsersLoginView usersLoginView) {
         this.usersLoginView = usersLoginView;
     }
 
-    public void setClientLoginService(UsersLoginAccessSQL clientLoginService) {
+    public void setClientLoginService(UsersDataAccessSQL clientLoginService) {
         this.clientLoginService = clientLoginService;
     }
 
@@ -25,9 +26,13 @@ public class UsersLoginController {
     }
 
     public void handleClickButtonOk(UsersLoginModel usersLoginModel) throws MalformedURLException {
-        System.out.println("handleClickButtonOk " + usersLoginModel.toString());
+        System.out.println("handleClickButtonOk " + usersLoginModel.getUsername());
         if (isValidUserAccount(usersLoginModel)) {
             usersLoginView.displayMessage(createWelcomeMessage());
+
+            UserSession userSession = UserSession.getInstance();
+            userSession.setUsername(usersLoginModel.getUsername());
+            userSession.setPassword(usersLoginModel.getPassword());
 
             if (currentUserAccount.isAdmin()) {
                 // User is an admin, show admin panel
@@ -39,18 +44,16 @@ public class UsersLoginController {
                 }
                 adminView.setVisible(true);
             } else {
-                // User is not an admin, show user panel
                 UserView userView = new UserView();
                 userView.setVisible(true);
             }
-
             usersLoginView.dispose();
         } else {
             usersLoginView.displayMessage("Bad credentials!");
         }
     }
     private String createWelcomeMessage() {
-        return "Welcome! " + currentUserAccount.getUsername() + " " + currentUserAccount.isAdmin();
+        return "Welcome, " + currentUserAccount.getUsername() + "!";
     }
 
     private boolean isValidUserAccount(UsersLoginModel usersLoginModel) {
@@ -73,5 +76,5 @@ public class UsersLoginController {
     public void handleClickButtonCancel(UsersLoginModel usersLoginModel) {
         System.out.println("handleClickButtonCancel " + usersLoginModel.toString());
     }
-    }
+}
 
