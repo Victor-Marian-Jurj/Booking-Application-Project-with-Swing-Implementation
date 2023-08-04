@@ -16,6 +16,6 @@ public class DBUtil {
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/book_smart", "postgres", "BazaMea16-");
+        return DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/hotel_management", "postgres", "postgres");
     }
 }

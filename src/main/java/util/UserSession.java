@@ -1,29 +1,18 @@
 package util;
 
-import business.entities.Users;
-
 public class UserSession {
     private int userId;
     private String username;
     private String password;
 
-    private static UserSession instance;
-    private Users loggedInUser;
 
+    private static UserSession instance;
 
     public static UserSession getInstance() {
         if (instance == null) {
             instance = new UserSession();
         }
         return instance;
-    }
-
-    public Users getLoggedInUser() {
-        return loggedInUser;
-    }
-
-    public void setLoggedInUser(Users loggedInUser) {
-        this.loggedInUser = loggedInUser;
     }
 
     public int getUserId() {

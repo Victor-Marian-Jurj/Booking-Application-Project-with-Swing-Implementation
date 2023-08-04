@@ -1,8 +1,8 @@
 package presentation.userlogin;
 
-import business.entities.Users;
 import business.services.ReservationService;
 import business.services.RoomService;
+import business.services.UsersService;
 import persistance.ReservationDataAccessSQL;
 import persistance.RoomDataAccessSQL;
 import persistance.UsersDataAccessSQL;
@@ -26,25 +26,10 @@ import java.net.URL;
 
 
 public class UserView extends JFrame {
-    private Users loggedInUser;
+
     private final String userType = "user";
 
     public UserView() throws MalformedURLException {
-
-        loggedInUser = UserSession.getInstance().getLoggedInUser();
-
-
-//        Users loggedInUser = UserSession.getInstance().getLoggedInUser();
-
-
-
-        if (loggedInUser != null) {
-            UpdateUserProfileDialog updateDialog = new UpdateUserProfileDialog(this, loggedInUser);
-            updateDialog.setCurrentUser(loggedInUser);
-            updateDialog.setVisible(true);
-        }
-
-
 
         JPanel userPanel = new JPanel();
         this.setContentPane(userPanel);
@@ -117,7 +102,11 @@ public class UserView extends JFrame {
         this.setLocationRelativeTo(null);
 
         updateUserInformationButton.addActionListener(e -> {
-            buttonUpdateIsPressed();
+            try {
+                buttonUpdateUserInformationIsPressed();
+            } catch (MalformedURLException ex) {
+                throw new RuntimeException(ex);
+            }
         });
         showAllHotelsButton.addActionListener(e -> buttonShowHotelsPressed());
         showAvailableRoomsButton.addActionListener(e -> buttonShowAvailableRoomPressed());
@@ -125,17 +114,9 @@ public class UserView extends JFrame {
         createReservationButton.addActionListener(e -> buttonCreateReservationPressed());
 
     }
-    private void buttonUpdateIsPressed() {
-        Users loggedInUser = UserSession.getInstance().getLoggedInUser();
-        UpdateUserProfileDialog updateDialog = new UpdateUserProfileDialog(this, loggedInUser);
-        updateDialog.setVisible(true);
-    }
 
     private void buttonUpdateUserInformationIsPressed() throws MalformedURLException {
-        Users loggedInUser = UserSession.getInstance().getLoggedInUser();
-        UpdateUserProfileDialog updateDialog = new UpdateUserProfileDialog(this, loggedInUser);
-        updateDialog.setVisible(true);
-//        new GridBagLayoutUsersUpdate().setVisible(true);
+        new GridBagLayoutUsersUpdate().setVisible(true);
     }
 
     private void buttonLogoutPressed () throws MalformedURLException {
